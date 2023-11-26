@@ -20,6 +20,26 @@
             background: url(./image.webp);
             background-size: cover;
             background-position: center;
+            font-family: Public Pixelated;
+        }
+
+        .download-btn {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        button {
+            font-family: inherit;
+            background: none;
+            color: white;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: 1px solid white;
+        }
+
+        button:hover {
+            background: white;
+            color: black;
         }
 
         .container {
@@ -84,10 +104,10 @@
             outline: none;
             border-radius: 20px;
             border: none;
-            font-family: Public Pixelated;
             background: black;
             border: 1px solid white;
             color: white;
+            font-family: inherit;
         }
 
         .hide {
@@ -97,7 +117,6 @@
         .title {
             color: white;
             position: absolute;
-            font-family: Public Pixelated;
             font-size: 2.5rem;
             text-shadow: -5px 2px #2105a1;
         }   
@@ -118,13 +137,18 @@
         <div class="input-container">
             <input type="text">
         </div>
+        <div class="download-btn">
+            <button onclick="downloadPixelArt()">DOWNLOAD</button>
+        </div>
     </div>
+
+    <a id="dlderElement" class="hide"></a>
 
     <script type="text/javascript">
         const image_container = document.getElementById("image-container");
         const input = document.querySelector(".input-container input");
         const loader = document.querySelector(".image-outer-container .loader");
-
+        let pixelArt;
         input.addEventListener("input",async function(event) {
             if (this.value == "") {
                 image_container.innerHTML = "";
@@ -137,6 +161,8 @@
             const request = await fetch("https://api.dicebear.com/7.x/pixel-art/svg?seed="+this.value);
             const svg = await request.text();
 
+            pixelArt = svg;
+
             image_container.innerHTML = svg;
             
             input.removeAttribute("disabled");
@@ -145,6 +171,19 @@
         });
 
         window.addEventListener("DOMContentLoaded",init);
+
+        function downloadPixelArt() {
+           const a = document.getElementById("dlderElement"); 
+           const DOMURI = self.URL || self.webkitURL || self;
+           const svg = new Blob([pixelArt], {type: "image/svg+xml;charset=utf-8"});
+           const svgURL = self.URL.createObjectURL(svg);
+           
+           a.href = svgURL;   
+           a.download = input.value + ".svg";
+           a.click();
+
+           DOMURI.revokeObjectURL(svgURL);
+        }
 
 
         function init() {
